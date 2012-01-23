@@ -1,0 +1,34 @@
+20.01.2012
+  - pattern filter in filechooser (use license compatible code from fltk)
+  - onChange signal to BPCombobox
+  - fix BPCombobox redraw
+10.01.2012
+  - fix scrolling in selectItem
+03.01.2012
+  - maybe some acceleration
+  - PBNumericSelector like OpenPageselector but with user defined title
+20.12.2011
+  v 0.1_pre20111220
+  - combobox
+  - checkbutton
+18.12.2011
+  - use libsigc++ instead of cppsignal and event
+  - rename get(set)Left Top Width Height -> x,y,w,h
+13.12.2011
+  - add PBDialog class
+12.12.2011
+  - split pbcontrols.*
+  - rename control to widget
+11.12.2011
+  - remove chdir from fc,
+  - fix some bugs
+09.12.2011
+  - filechooser return full path
+04.12.2011
+  - fix filechooser
+  - add convert.* from qsp
+02.12.2011
+  - split BPListBox
+  - introduse autoopening default font (bold and normal), no more need manual font setting 
+    to all parentless widgewts
+  - add BPListBox::selectItem(PBListItem*)
