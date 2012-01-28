@@ -51,14 +51,14 @@ PBBMPImage::PBBMPImage(const char* fname){
 }
 
 PBImage* PBImage::createFromFile(const char* fname){
-  if(!fname || strlen(fname)<3)return NULL;
+  if(!fname || strlen(fname)<3)return (NULL);//return empty
   const char *ext=&fname[strlen(fname)-3];
   if(strcasecmp(ext,"png")==0)
-    return new PBPNGImage(fname);
+    return (new PBPNGImage(fname));
   if(strcasecmp(ext,"gif")==0)
-    return new PBGIFImage(fname);
+    return (new PBGIFImage(fname));
   if(strcasecmp(ext,"bmp")==0)
-    return new PBBMPImage(fname);
-  return new PBJPEGImage(fname);
+    return (new PBBMPImage(fname));
+  return (new PBJPEGImage(fname));
 }
 

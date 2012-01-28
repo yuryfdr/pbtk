@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <vector>
 #include <sigc++/sigc++.h>
+#include <boost/shared_ptr.hpp>
 
 #undef IVSAPP
 #include "inkview.h"
@@ -61,7 +62,7 @@ protected:
   PBWidget *_focusedWidget;
 
   PBWidget *_parent;
-  PBImage *_image;
+  boost::shared_ptr<PBImage> _image;
 
   std::vector <PBWidget*>_children;
   std::string _tag;
@@ -111,8 +112,8 @@ public:
 
   PBWidget *getParent() const { return _parent; };
 
-  PBImage *getImage() const { return _image; }
-  void setImage(PBImage * val) { _image = val; }
+  boost::shared_ptr<PBImage> getImage() const { return _image; }
+  void setImage(boost::shared_ptr<PBImage> val) { _image = val; }
 
   std::string getTag()const { return _tag; }
   void setTag(const std::string & val) { _tag = val; }

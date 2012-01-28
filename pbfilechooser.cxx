@@ -124,18 +124,18 @@ int PBDirList::handle(int type, int par1, int par2){
       }
     }
   }
-  if( !ret && (type == EVT_POINTERDOWN || type == EVT_POINTERUP)
+  if( !ret && (/*type == EVT_POINTERDOWN ||*/ type == EVT_POINTERUP)
            && eventInside(par1,par2)){
     for(lbitem_cit it = _items.begin();
                    it < _items.end();++it){
       if( (*it)->eventInside(par1,par2) ){
         if( (*it)->canBeFocused() ){
           (*it)->setFocused(true);
-          update();
+          //update();
           if(type == EVT_POINTERUP){
             load((*it)->getText());
-            getParent()->update();
           }
+          getParent()->update();
           return 1;
         }
       }

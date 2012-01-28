@@ -41,6 +41,7 @@ PBDialog::PBDialog(const std::string& title):PBWidget(title,NULL),rethnd(NULL)
 }
 
 void PBDialog::run(pb_dialoghandler ds){
+  setVisible(true);
   dlg=this;
   rethnd=ds;
   prev_handler = GetEventHandler();
@@ -53,5 +54,6 @@ void PBDialog::run(pb_dialoghandler ds){
 void PBDialog::quit(bool isok){
   SetEventHandler(prev_handler);
   onQuit.emit(this,isok);
+  setVisible(false);
 }
 

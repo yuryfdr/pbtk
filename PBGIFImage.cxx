@@ -15,10 +15,10 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "PBImg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "gif_lib.h"
-#include "PBImg.h"
 #include <vector>
 
 static int InterlacedOffset[] = { 0, 4, 2, 1 };

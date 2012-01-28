@@ -15,28 +15,45 @@
 * along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
+//#include <inkinternal.h>
 #include "pbwidget.h"
 
 #include <iostream>
+
 
 int PBWidget::defaultFontSize=20;
 ifont* PBWidget::defaultFont=NULL;
 ifont* PBWidget::captionFont=NULL;
 ifont* PBWidget::defaultBoldFont=NULL;
 
+//static bool scropened=false;
+
 PBWidget::PBWidget(const std::string & name, PBWidget * parent): _text(name),_w(10), _h(10),
 _canBeFocused(true), _drawBorder(true), _focused(false), _leaveOnKeys(true), _visible(true),
-_font(NULL),_parent(parent), _image(NULL),update_needed(true)//, 
+_font(NULL),_parent(parent), /*_image(NULL),*/update_needed(true)//, 
 //WidgetFocusChangedSlot(this, &PBWidget::widgetFocusChangedHandler), 
 //WidgetLeaveSlot(this, &PBWidget::widgetLeaveHandler)
 {
-  if (parent == 0) {
+  if (!_parent) {
+/*    if(ivstate.isopen){
+      OpenScreen();
+    }
+    if(!defaultFont){
+      defaultFont=OpenFont(DEFAULTFONT,defaultFontSize,1);
+    }
+    if(!defaultBoldFont){
+      defaultBoldFont=OpenFont(DEFAULTFONTB,defaultFontSize,1);
+    }
+    if(!captionFont){
+      captionFont=OpenFont(DEFAULTFONTB,defaultFontSize/1.5,1);
+    }*/
     _y = 0;
     _x = 0;
     _useParentFont = false;
+    _font=defaultFont;
   } else {
-    _y = parent->y();
-    _x = parent->x();
+    _y = _parent->y();
+    _x = _parent->x();
     _useParentFont = true;
   }
 }
@@ -47,12 +64,13 @@ int PBWidget::dispatchMsgToWidgets(int type, int par1, int par2)
   int ret = 0;
   if (focused != 0)
     ret = focused->handle(type, par1, par2);
-  if (!ret && type == EVT_POINTERDOWN) {
+  if (!ret && ISPOINTEREVENT(type) ) {
     child_it it;
     for (it = _children.begin(); it != _children.end(); it++)
-      if (ret = (*it)->handle(type, par1, par2)) {
-        return ret;
-      }
+      if(*it!=focused)
+        if (ret = (*it)->handle(type, par1, par2)) {
+          return ret;
+        }
   }
   return ret;
 }
@@ -64,7 +82,8 @@ void PBWidget::widgetFocusChangeHandler(PBWidget * sender, bool focused)
     PBWidget *fc = getFocusedWidget();
     if (fc != 0 && fc != sender){
       fc->setFocused(false);
-      update();
+      //if(_parent)_parent->update();
+      /*else*/ update();
     }
     _focusedWidget = sender;
 
@@ -101,7 +120,7 @@ void PBWidget::widgetLeaveHandler(PBWidget * sender, bool next)
 
       if ( (*it)->isVisible() && (*it)->canBeFocused()) {
         (*it)->setFocused(true);
-        update();
+        //update();
         break;
       }
     } while ( *it != sender);
@@ -122,7 +141,7 @@ void PBWidget::widgetLeaveHandler(PBWidget * sender, bool next)
 
       if ( (*it)->isVisible() && (*it)->canBeFocused()) {
         (*it)->setFocused(true);
-        update();
+        //update();
         break;
       }
     }
@@ -219,6 +238,7 @@ int PBWidget::handle(int type, int par1, int par2)
   int ret = dispatchMsgToWidgets(type, par1, par2);
   if (type == EVT_POINTERDOWN && eventInside(par1, par2) && isVisible() && canBeFocused()) {
     setFocused(true);
+    //update();
   }
   return ret;
 }

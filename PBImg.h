@@ -18,6 +18,7 @@
 //struct ibitmap_s;
 //typedef struct ibitmap_s ibitmap;
 
+#include <boost/shared_ptr.hpp>
 #include <inkview.h>
 /**
   base class for different images format

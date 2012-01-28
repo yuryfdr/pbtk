@@ -55,9 +55,9 @@ protected:
 protected:
   std::string _caption;
 
-  virtual void placeWidgets();
   virtual int getCaptionHeight() const;
 public:
+  virtual void placeWidgets();
   PBListBox(const std::string & name, PBWidget * parent):PBWidget(name, parent)
   , _graylinks(false), scrollDelta(0) { }
   ~PBListBox();
@@ -73,7 +73,7 @@ public:
   virtual void selectItem(int nmb);
   int itemsCount()const{return _items.size();}
   virtual PBListBoxItem *addItem(const std::string & text, const std::string & tag = "", int align = 1);
-  virtual PBListBoxItem *addItem(PBImage * image, const std::string & tag = "",int align =1);
+  virtual PBListBoxItem *addItem(boost::shared_ptr<PBImage> image, const std::string & tag = "",int align =1);
   PBListBoxItem *insertBefore(const PBListBoxItem* itm,const std::string & text);
   PBListBoxItem *insertAfter(const PBListBoxItem* itm,const std::string & text);
   PBListBoxItem *erase(const PBListBoxItem* itm,bool delete_item=true);

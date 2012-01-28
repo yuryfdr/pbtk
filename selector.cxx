@@ -114,7 +114,7 @@ int PBNumericSelector::handle(int type,int par1,int par2){
       return 1;
     }
   }
-  if(EVT_POINTERDOWN == type){
+  if(EVT_POINTERUP == type){
     int cx=(par1-x())/elw;
     if(cx>=0 && cx<3){
       int cy=(par2-y()-1.2*captionFont->height)/elw;

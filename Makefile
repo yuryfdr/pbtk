@@ -16,7 +16,7 @@ CXXFLAGS+=-I/usr/arm-linux/include/c++/3.4.1  -I/usr/arm-linux/include/c++/3.4.1
 -I/usr/local/pocketbook/arm-linux/include/sigc++-2.0 
 endif
 ifeq ($(BUILD),emu)
-CXXFLAGS+=`pkg-config --cflags sigc++-2.0` -I./../
+CXXFLAGS+=-g `pkg-config --cflags sigc++-2.0` -I./../
 endif
 
 include /usr/local/pocketbook/common.mk
@@ -69,9 +69,9 @@ $(LBPBTK): $(OBJDIR) $(OBJS)
 $(LBPBTK_IMG): $(OBJS_IMG)
 	$(AR) cr $@ $(OBJS_IMG)
 
-$(OBJDIR):
-	mkdir -p $(OBJDIR)/src
-	mkdir -p $(OBJDIR)/images
+#$(OBJDIR):
+#	mkdir -p $(OBJDIR)/src
+#	mkdir -p $(OBJDIR)/images
 
 $(PROJECT): $(LBPBTK) $(LBPBTK_IMG)
 	touch $(PROJECT)

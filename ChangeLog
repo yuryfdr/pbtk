@@ -1,3 +1,7 @@
+27.01.2012
+  v 0.1_rc1
+  - use shared_ptr for images (avoid menory likages in qsp)
+  - fix pointers events propagations (double POINTER_DOWN)
 20.01.2012
   - pattern filter in filechooser (use license compatible code from fltk)
   - onChange signal to BPCombobox

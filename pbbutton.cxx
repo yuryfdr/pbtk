@@ -59,11 +59,14 @@ int PBButton::handle(int type, int par1, int par2)
       break;
     }
   }
-  if (type == EVT_POINTERDOWN /*&& eventInside(par1,par2) */ ) {
+  if (type == EVT_POINTERUP /*&& eventInside(par1,par2) */ ) {
     //printf("eventInside(par1,par2) %d %p\n",eventInside(par1,par2),this);
     if (eventInside(par1, par2) /*&& canBeFocused()*/) {
+      PBWidget* pf=(_parent)?_parent->getFocusedWidget():NULL;
       setFocused(true);
+      //if(_parent && pf!=this){_parent->update();}
       onPress.emit(this);
+      //if(_parent)_parent->update();
       return 1;
     }
   }
