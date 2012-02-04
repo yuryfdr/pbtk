@@ -1,3 +1,9 @@
+04.02.2012
+  - add dialog caption
+  - new scrollbar drawing
+03.02.2012
+  - fix selector
+  - fix scroll select focused item
 27.01.2012
   v 0.1_rc1
   - use shared_ptr for images (avoid menory likages in qsp)

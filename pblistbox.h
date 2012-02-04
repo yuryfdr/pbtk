@@ -56,6 +56,7 @@ protected:
   std::string _caption;
 
   virtual int getCaptionHeight() const;
+  void focusFirstIfCan();
 public:
   virtual void placeWidgets();
   PBListBox(const std::string & name, PBWidget * parent):PBWidget(name, parent)

@@ -46,6 +46,8 @@ protected:
   virtual void quit(bool isok);
 public:
   PBDialog(const std::string& title);
+  int captionHeight(){if(captionFont)return int(1.2*captionFont->height); return int(defaultFontSize/1.5);}
+  virtual void draw();
   /**
     show the dialog 
     \param hproc - quit callback (must be called in derived class)

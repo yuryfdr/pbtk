@@ -105,11 +105,11 @@ int PBNumericSelector::handle(int type,int par1,int par2){
       update();
       return 1;
       case KEY_UP:
-      --cby;if(cby<0)cby=3;
+      --cby;if(cby<0)cby=4;
       update();
       return 1;
       case KEY_DOWN:
-      ++cby;if(cbx>3)cby=0;
+      ++cby;if(cby>4)cby=0;
       update();
       return 1;
     }

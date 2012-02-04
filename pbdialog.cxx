@@ -56,4 +56,10 @@ void PBDialog::quit(bool isok){
   onQuit.emit(this,isok);
   setVisible(false);
 }
+void PBDialog::draw(){
+  PBWidget::draw();
+  SetFont(captionFont,WHITE);
+  FillArea(x(),y(),w(),1.2*captionFont->height,BLACK);
+  DrawTextRect(x()+2,y(),w()-4,1.2*captionFont->height,getText().c_str(),ALIGN_LEFT|VALIGN_MIDDLE);
+}
 

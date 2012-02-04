@@ -26,7 +26,7 @@ void PBLabel::draw()
 
 int PBLabel::handle(int type, int par1, int par2)
 {
-  if (type == EVT_KEYPRESS) {
+  if (type == EVT_KEYRELEASE) {
     switch (par1) {
     case KEY_LEFT:
     case KEY_UP:

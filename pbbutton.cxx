@@ -44,7 +44,7 @@ void PBButton::draw()
 
 int PBButton::handle(int type, int par1, int par2)
 {
-  if (type == EVT_KEYPRESS) {
+  if (type == EVT_KEYRELEASE) {
     switch (par1) {
     case KEY_OK:
       onPress.emit(this);

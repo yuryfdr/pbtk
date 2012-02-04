@@ -111,10 +111,18 @@ void PBListBox::selectItem(int nmb)
     }
   }
 }
-
+void PBListBox::focusFirstIfCan(){
+  placeWidgets();
+  for(lbitem_it it = _items.begin();it<_items.end();++it){
+    if( (*it)->y()>y() && (*it)->y()<y()+h() && (*it)->canBeFocused()){
+      (*it)->setFocused(true);break;
+    }
+  }
+}
 int PBListBox::handle(int type, int par1, int par2)
 {
   //printf("%s %d %d %d\n",__FUNCTION__,type,par1,par2);
+  static bool was_repeat(false);
   if (PBWidget::handle(type, par1, par2))
     return 1;
   if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() + 2. * w() / 3.) < par1) {
@@ -135,12 +143,13 @@ int PBListBox::handle(int type, int par1, int par2)
       return 1;
     }
   }
-  if (EVT_KEYPRESS == type || (EVT_KEYREPEAT == type && par2 == 1)) {
+  if (EVT_KEYRELEASE == type || (EVT_KEYREPEAT == type && par2 == 1)) {
     if (totalHeight > h()) {
       if (par1 == KEY_RIGHT && (scrollDelta < (totalHeight - h()))) {
         scrollDelta += (EVT_KEYREPEAT != type) ? getFont()->size : (h() * 0.9);
         if (scrollDelta > (totalHeight - h()))
           scrollDelta = (totalHeight - h());
+        if(EVT_KEYREPEAT == type){focusFirstIfCan();was_repeat=true;}
         update(true);
         return 1;
       }
@@ -148,26 +157,29 @@ int PBListBox::handle(int type, int par1, int par2)
         scrollDelta -= (EVT_KEYREPEAT != type) ? getFont()->size : (h() * 0.9);
         if (scrollDelta < 0)
           scrollDelta = 0;
+        if(EVT_KEYREPEAT == type){focusFirstIfCan();was_repeat=true;}
         update(true);
         return 1;
       }
-      if ((par1 == KEY_PREV || par1 == KEY_MINUS) && (scrollDelta < (totalHeight - h()))) {
+      if ((par1 == KEY_PREV ) && (scrollDelta < (totalHeight - h()))) {
         scrollDelta += (h() * 0.9);
         if (scrollDelta > (totalHeight - h()))
           scrollDelta = (totalHeight - h());
+        focusFirstIfCan();
         update(true);
         return 1;
       }
-      if ((par1 == KEY_NEXT || par1 == KEY_PLUS) && scrollDelta > 0) {
+      if ((par1 == KEY_NEXT ) && scrollDelta > 0) {
         scrollDelta -= (h() * 0.9);
         if (scrollDelta < 0)
           scrollDelta = 0;
+        focusFirstIfCan();
         update(true);
         return 1;
       }
     }
   }
-  if (EVT_KEYPRESS == type) {
+  if (EVT_KEYRELEASE == type && !was_repeat) {
     bool sdch = false;
     PBWidget *fc = getFocusedWidget();
     int fc_itm = -1;
@@ -208,7 +220,7 @@ int PBListBox::handle(int type, int par1, int par2)
       break;
     }
   }
-  if (type == EVT_KEYPRESS) {
+  if (type == EVT_KEYRELEASE && !was_repeat) {
     switch (par1) {
     case KEY_DOWN:
       if (getFocusedWidget() == 0 || _children.size() == 0) {
@@ -238,7 +250,7 @@ int PBListBox::handle(int type, int par1, int par2)
       return 1;
     }
   }
-
+  if( EVT_KEYPRESS==type)was_repeat=false;
   return 0;
 }
 
@@ -271,6 +283,19 @@ void PBListBox::draw()
     update_needed = false;
   }
   int cH = getCaptionHeight();
+  if (totalHeight > (h() - cH)) {
+    int scrH = h() - 1.5* BORDER_SPACE - cH;
+    FillArea(x() + w() - 2.5 * BORDER_SPACE,
+             y() + cH + BORDER_SPACE
+             , 2*BORDER_SPACE  , scrH, LGRAY);
+    DrawRect(x() + w() - 2.5 * BORDER_SPACE,
+             y() + cH + BORDER_SPACE
+             , 2*BORDER_SPACE  , scrH, BLACK);
+    FillArea(x() + w() - 2.5 * BORDER_SPACE,
+             y() + BORDER_SPACE + scrollDelta * scrH / (totalHeight) + cH
+             , 2 * BORDER_SPACE,
+             scrH * scrH / totalHeight /*- BORDER_SPACE*/, BLACK);
+  }
   if (_drawBorder)
     DrawRect(x(), y(), w(), h(), BLACK);
   if (getCaption().size() > 0) {
@@ -286,13 +311,6 @@ void PBListBox::draw()
     _items[i]->drawIfVisible();
   }
   SetClip(0, 0, ScreenWidth(), ScreenHeight());
-  if (totalHeight > (h() - cH)) {
-    int scrH = h() - BORDER_SPACE - cH;
-    DrawRect(x() + w() - 2 * BORDER_SPACE, y() + cH + BORDER_SPACE, BORDER_SPACE, scrH, BLACK);
-    FillArea(x() + w() - 2 * BORDER_SPACE,
-             y() + BORDER_SPACE / 2 + scrollDelta * scrH / (totalHeight) + cH, 2 * BORDER_SPACE,
-             scrH * scrH / totalHeight - BORDER_SPACE, BLACK);
-  }
   if (_drawBorder && _focused)
     DrawRect(x() + BORDER_SPACE / 2, y() + BORDER_SPACE / 2,
              w() - BORDER_SPACE, h() - BORDER_SPACE, BLACK);

@@ -155,7 +155,7 @@ PBFileChooser::PBFileChooser(const char* title,OpenMode mode):PBDialog(title),fi
   cbx_pattern("",this),lb_path("",this)//,
   //btPress(this,&PBFileChooser::onButton)
 {
-  fileList.setCaption(title);
+  //fileList.setCaption(title);
   cbx_pattern.editable(false);
   cbx_pattern.setText("*");
   cbx_pattern.onChange.connect(sigc::mem_fun(this,&PBFileChooser::on_pattern_changed));
@@ -176,7 +176,7 @@ void PBFileChooser::update(bool relayout){
 }
 void PBFileChooser::placeWidgets(){
   setSize(10,10,580,580);
-  fileList.setSize(12,12,576,470);
+  fileList.setSize(12,12+captionHeight(),576,470-captionHeight());
   cbx_pattern.setSize(12,485,576,25);
   lb_path.setSize(12,515,576,25);
   bt_ok.setSize(12,545,286,30);
