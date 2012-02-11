@@ -14,6 +14,8 @@
 * along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
+#ifndef _PBTK_NUMERIC_SELECTOR_
+#define _PBTK_NUMERIC_SELECTOR_
 #include "pbdialog.h"
 
 class PBNumericSelector: public PBDialog {
@@ -32,7 +34,6 @@ class PBNumericSelector: public PBDialog {
     if(fnt->height > elw) elw=fnt->height;
     elw*=2;
     setSize((ScreenWidth()-3*elw)/2,50,elw*3,elw*5+1.2*captionFont->height+2);
-    //printf("PW:%d\n",elw);
   }
   void draw();
   int handle(int type,int par1,int par2);
@@ -41,3 +42,5 @@ class PBNumericSelector: public PBDialog {
   void reset(){_select=0;cbx=1;cby=2;};
   sigc::signal<void,PBNumericSelector*,bool> onSelect;
 };
+#endif //_PBTK_NUMERIC_SELECTOR_
+

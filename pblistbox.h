@@ -103,6 +103,9 @@ public:
   }
   virtual void clear();
   virtual int getSelectedIndex() const;
+  virtual PBListBoxItem*  getSelectedItem(){
+    return getItem(getSelectedIndex());
+  };
   PBListBoxItem* getItem(int i){
     if(i>=0 && i<(int)_items.size()){
       return _items[i];
