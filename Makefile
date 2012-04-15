@@ -1,5 +1,7 @@
 OUT= dummy
 
+include /usr/local/pocketbook/common.mk
+
 ifndef BUILD
 BUILD=emu
 CFLAGS+=-g
@@ -19,10 +21,9 @@ ifeq ($(BUILD),emu)
 CXXFLAGS+=-g `pkg-config --cflags sigc++-2.0` -I./../
 endif
 
-include /usr/local/pocketbook/common.mk
 
 CXXFLAGS+=-Wall \
--DHAS_NO_IV_GET_DEFAULT_FONT `freetype-config --cflags`
+-DHAS_NO_IV_GET_DEFAULT_FONT `freetype-config --cflags` -fPIC
 #LIBS+=-lgif -lpng12
 
 SOURCES=\
@@ -56,11 +57,17 @@ PIXMAPS_OBJS=$(addprefix $(OBJDIR)/,$(PIXMAPS_C:.c=.o))
 
 OBJS_IMG=$(addprefix $(OBJDIR)/,$(SOURCES_IMG:.cxx=.cxx.o))
 
+LIBPBTK_SHARED_NAME=libpbtk.so
+LIBPBTK_SHARED=$(OBJDIR)/libpbtk.so
+
 LBPBTK=$(OBJDIR)/libpbtk.a
 
 LBPBTK_IMG=$(OBJDIR)/libpbtk_img.a
 
-all: $(LBPBTK) $(LBPBTK_IMG)
+all: $(LBPBTK) $(LBPBTK_IMG) #$(LIBPBTK_SHARED)
+
+$(LIBPBTK_SHARED): $(OBJDIR) $(OBJS)
+	$(CXX) -shared -o $@ -fPIC $(OBJS)
 
 $(LBPBTK): $(OBJDIR) $(OBJS)
 	$(AR) cr $@ $(OBJS)
@@ -69,11 +76,11 @@ $(LBPBTK): $(OBJDIR) $(OBJS)
 $(LBPBTK_IMG): $(OBJS_IMG)
 	$(AR) cr $@ $(OBJS_IMG)
 
-#$(OBJDIR):
-#	mkdir -p $(OBJDIR)/src
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 #	mkdir -p $(OBJDIR)/images
 
-$(PROJECT): $(LBPBTK) $(LBPBTK_IMG)
+$(PROJECT): $(LBPBTK) $(LBPBTK_IMG) #$(LIBPBTK_SHARED)
 	touch $(PROJECT)
 
 $(OBJDIR)/%.cxx.o: %.cxx

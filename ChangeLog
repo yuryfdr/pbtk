@@ -1,3 +1,10 @@
+05.04.2012
+  - add onItemAction signal to listbox
+03.04.2012
+  - speed up listbox
+30.03.2012
+  - underline selected item in PBListBox if it lost focus
+  - fix getSelectedIndex for unfocused PBListBox 
 11.02.2012
   v 0.1.1
   - add PBListBox::getSelectedItem()

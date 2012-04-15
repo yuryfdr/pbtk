@@ -54,6 +54,9 @@ void PBListBoxItem::draw()
 
   if (_focused)
     DrawSelection(x() + markerWidth, y(), w() - markerWidth, h(), BLACK);
+  else if(getParent() && getParent()->getFocusedWidget() == this){
+    DrawLine(x() + markerWidth, y()+h()-BORDER_SPACE,x()+w(),y()+h()-BORDER_SPACE,BLACK);
+  }
 }
 
 int PBListBoxItem::h() const
@@ -99,16 +102,16 @@ void PBListBox::selectItem(PBListBoxItem * itm)
 void PBListBox::selectItem(int nmb)
 {
   if (nmb >= 0 && nmb < (int)_items.size()) {
-    _items[nmb]->setFocused(true);
     int iy = _items[nmb]->y() + _items[nmb]->h();
     if (iy > y() + h()) {
       scrollDelta = (iy + scrollDelta) - y() - h();
-      //scrollDelta+=_items[nmb]->y();
       update_needed = true;
     } else if (_items[nmb]->y() < y() + getCaptionHeight()) {
       scrollDelta = _items[nmb]->y() + scrollDelta - y() - getCaptionHeight();
       update_needed = true;
     }
+    if(update_needed)placeWidgets();
+    _items[nmb]->setFocused(true);
   }
 }
 void PBListBox::focusFirstIfCan(){
@@ -121,11 +124,16 @@ void PBListBox::focusFirstIfCan(){
 }
 int PBListBox::handle(int type, int par1, int par2)
 {
-  //printf("%s %d %d %d\n",__FUNCTION__,type,par1,par2);
   static bool was_repeat(false);
-  if (PBWidget::handle(type, par1, par2))
+  if (PBWidget::handle(type, par1, par2)){
+    PBListBoxItem* si;
+    if(type==EVT_POINTERLONG && eventInside(par1, par2) && (si=getSelectedItem())){
+      if( si->eventInside(par1,par2) )onItemAction.emit(this,getSelectedIndex());
+    }
     return 1;
+  }
   if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() + 2. * w() / 3.) < par1) {
+    //std::cerr<<"Scroll Pretend\n";
     if (totalHeight > (h() - getCaptionHeight())
         && scrollDelta < (totalHeight - (h() - getCaptionHeight()))
         && par2 > (y() + 2. / 3. * h())) {
@@ -133,6 +141,7 @@ int PBListBox::handle(int type, int par1, int par2)
       if (scrollDelta > (totalHeight - (h() - getCaptionHeight())))
         scrollDelta = (totalHeight - h() - getCaptionHeight());
       update(true);
+    //std::cerr<<"Scroll down\n";
       return 1;
     }
     if (totalHeight > h() && scrollDelta > 0 && par2 < (y() + 1. / 3. * h())) {
@@ -140,10 +149,11 @@ int PBListBox::handle(int type, int par1, int par2)
       if (scrollDelta < 0)
         scrollDelta = 0;
       update(true);
+    //std::cerr<<"Scroll up\n";
       return 1;
     }
   }
-  if (EVT_KEYRELEASE == type || (EVT_KEYREPEAT == type && par2 == 1)) {
+  if ( (EVT_KEYRELEASE == type && _scrollOnRL ) || (EVT_KEYREPEAT == type && par2 == 1)) {
     if (totalHeight > h()) {
       if (par1 == KEY_RIGHT && (scrollDelta < (totalHeight - h()))) {
         scrollDelta += (EVT_KEYREPEAT != type) ? getFont()->size : (h() * 0.9);
@@ -177,10 +187,10 @@ int PBListBox::handle(int type, int par1, int par2)
         update(true);
         return 1;
       }
+      if ( par1==KEY_OK && type==EVT_KEYREPEAT )onItemAction.emit(this,getSelectedIndex());
     }
   }
   if (EVT_KEYRELEASE == type && !was_repeat) {
-    bool sdch = false;
     PBWidget *fc = getFocusedWidget();
     int fc_itm = -1;
     switch (par1) {
@@ -190,12 +200,11 @@ int PBListBox::handle(int type, int par1, int par2)
           fc_itm = i;
         if (_items[i]->canBeFocused()) {
           if (!fc || ((int)i > fc_itm && fc_itm != -1)) {
-            _items[i]->setFocused(true);
             if (_items[i]->y() + _items[i]->h() > y() + h()) {
               scrollDelta = (_items[i]->y() + _items[i]->h() + scrollDelta) - y() - h();
-              sdch = true;
+              update_needed = true;
             }
-            update(sdch);
+            _items[i]->setFocused(true);
             return 1;
           }
         }
@@ -207,12 +216,11 @@ int PBListBox::handle(int type, int par1, int par2)
           fc_itm = i;
         if (_items[i]->canBeFocused()) {
           if (!fc || (i < fc_itm && fc_itm != -1)) {
-            _items[i]->setFocused(true);
             if (_items[i]->y() < y() + getCaptionHeight()) {
               scrollDelta = _items[i]->y() + scrollDelta - y() - getCaptionHeight();
-              sdch = true;
+              update_needed = true;
             }
-            update(sdch);
+            _items[i]->setFocused(true);
             return 1;
           }
         }
@@ -226,7 +234,6 @@ int PBListBox::handle(int type, int par1, int par2)
       if (getFocusedWidget() == 0 || _children.size() == 0) {
         onLeave.emit(this, true);
       } else if (getFocusedWidget() != 0) {
-        // if bottom item selected and there's next page, go to this page
         if (getFocusedWidget() == *(_items.rbegin())) {
           widgetLeaveHandler(getFocusedWidget(), true);
         }
@@ -236,7 +243,6 @@ int PBListBox::handle(int type, int par1, int par2)
       if (getFocusedWidget() == 0 || _children.size() == 0) {
         onLeave.emit(this, false);
       } else if (getFocusedWidget() != 0) {
-        // if top item selected and there's previous page, go to this page
         if (getFocusedWidget() == *_items.begin()) {
           widgetLeaveHandler(getFocusedWidget(), false);
         }
@@ -414,8 +420,10 @@ void PBListBox::clear()
 
 int PBListBox::getSelectedIndex() const
 {
+  PBWidget* s=getFocusedWidget();
+  if(!s)return -1;
   for (lbitem_cit it = _items.begin(); it != _items.end(); ++it) {
-    if ((*it)->isFocused())     //!!
+    if( (*it)==s) //((*it)->isFocused())     //!!
       return it - _items.begin();
   }
 

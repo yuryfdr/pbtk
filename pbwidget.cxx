@@ -31,8 +31,6 @@ ifont* PBWidget::defaultBoldFont=NULL;
 PBWidget::PBWidget(const std::string & name, PBWidget * parent): _text(name),_w(10), _h(10),
 _canBeFocused(true), _drawBorder(true), _focused(false), _leaveOnKeys(true), _visible(true),
 _font(NULL),_parent(parent), /*_image(NULL),*/update_needed(true)//, 
-//WidgetFocusChangedSlot(this, &PBWidget::widgetFocusChangedHandler), 
-//WidgetLeaveSlot(this, &PBWidget::widgetLeaveHandler)
 {
   if (!_parent) {
 /*    if(ivstate.isopen){
@@ -82,14 +80,13 @@ void PBWidget::widgetFocusChangeHandler(PBWidget * sender, bool focused)
     PBWidget *fc = getFocusedWidget();
     if (fc != 0 && fc != sender){
       fc->setFocused(false);
-      //if(_parent)_parent->update();
-      /*else*/ update();
     }
     _focusedWidget = sender;
 
+    if(_parent)_parent->update();
+    else update();
     onFocusedWidgetChanged.emit(this);
   } else {
-
   }
 }
 
@@ -161,13 +158,12 @@ void PBWidget::setFocused(bool value)
 {
   if (_focused == value)
     return;
-
   // if lost focus, clear focus of child controls
   if (!value) {
     for (child_it it = _children.begin(); it != _children.end(); ++it) {
       (*it)->setFocused(false);
     }
-  } else {                      // if got focus
+  } else { // if got focus
     if (!canBeFocused())
       return;
     PBWidget *fc = getFocusedWidget();

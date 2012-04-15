@@ -1,4 +1,4 @@
-/* Copyright (C) 2011 Yury P. Fedorchenko (yuryfdr at users.sf.net)  */
+/* Copyright (C) 2011-2012 Yury P. Fedorchenko (yuryfdr at users.sf.net)  */
 /*
 * This library is free software; you can redistribute it and/or modify
 * it under the terms of the GNU Lesser General Public License as published by

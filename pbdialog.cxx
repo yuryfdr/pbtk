@@ -45,8 +45,8 @@ void PBDialog::run(pb_dialoghandler ds){
   dlg=this;
   rethnd=ds;
   prev_handler = GetEventHandler();
-  setFocused(true);
   placeWidgets();
+  setFocused(true);
   update(true);
   SetEventHandler(PBDialog::dialog_iv_handler);
 }

@@ -74,10 +74,12 @@ void PBDirList::setPath(const std::string& nm){
   for(std::vector<std::string>::iterator it=files.begin();it!=files.end();++it){
     itm = addItem(*it);
   }
-  update(true);
+  //update(true);
+  placeWidgets();
   if(!fname.empty())select(fname);
   else selectItem(0);
-  update();
+  if(_parent)_parent->update();
+  else update();
 }
 void PBDirList::select(const std::string& s){
   for(lbitem_it it=_items.begin();it!=_items.end();++it){
@@ -113,7 +115,7 @@ int PBDirList::handle(int type, int par1, int par2){
           load(item->getText());
           PBWidget* par = getParent();
           if(par){
-            par->update();
+            //par->update();
             if(type == EVT_KEYREPEAT){
               PBFileChooser* pfc=dynamic_cast<PBFileChooser*>(par);
               if(pfc)pfc->onButton(&pfc->bt_ok);
@@ -135,7 +137,7 @@ int PBDirList::handle(int type, int par1, int par2){
           if(type == EVT_POINTERUP){
             load((*it)->getText());
           }
-          getParent()->update();
+          //getParent()->update();
           return 1;
         }
       }
@@ -217,8 +219,8 @@ void OpenFileChooser(const char* title,const char* path,const char* pattern, int
   }
   else fc->setMode((PBFileChooser::OpenMode)mode);
   fc->setPattern(pattern);
-  fc->update(true);
   fc->setPath(path);
+  fc->update(true);
   fc->run(hproc);
 }
 

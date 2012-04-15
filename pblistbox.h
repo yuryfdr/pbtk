@@ -50,6 +50,7 @@ class PBListBox:public PBWidget {
 protected:
   std::vector < PBListBoxItem * >_items;
   bool _graylinks;
+  bool _scrollOnRL;
   int totalHeight;
   int scrollDelta;
 protected:
@@ -60,7 +61,7 @@ protected:
 public:
   virtual void placeWidgets();
   PBListBox(const std::string & name, PBWidget * parent):PBWidget(name, parent)
-  , _graylinks(false), scrollDelta(0) { }
+  , _graylinks(false), _scrollOnRL(false), scrollDelta(0) { }
   ~PBListBox();
 
   bool isGray() const { return _graylinks; }
@@ -112,6 +113,7 @@ public:
     }
     return NULL;
   }
+  sigc::signal<void,PBListBox*,int> onItemAction;//long OK or tap
 };
 
 #endif
