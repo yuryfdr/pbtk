@@ -71,8 +71,8 @@ public:
 
   virtual std::string getCaption() const { return _caption;}
   virtual void setCaption(const std::string & val) { _caption = val; };
-  virtual void selectItem(PBListBoxItem *);
-  virtual void selectItem(int nmb);
+  virtual void selectItem(PBListBoxItem *,bool update=true);
+  virtual void selectItem(int nmb,bool update=true);
   int itemsCount()const{return _items.size();}
   virtual PBListBoxItem *addItem(const std::string & text, const std::string & tag = "", int align = 1);
   virtual PBListBoxItem *addItem(boost::shared_ptr<PBImage> image, const std::string & tag = "",int align =1);

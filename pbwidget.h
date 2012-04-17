@@ -97,7 +97,7 @@ public:
   bool canBeFocused() const { return _canBeFocused; }
   void setCanBeFocused(bool value);
   bool isFocused() const { return _focused; };
-  void setFocused(bool value);
+  void setFocused(bool value,bool update=true);
   PBWidget *getFocusedWidget() const;
 
   void setWidgetFont(ifont * value);//< set font
@@ -136,17 +136,11 @@ public:
   void erase(PBWidget * control);     //< remove child control
 
   // signals
-  sigc::signal<void,PBWidget*,bool> onFocusChange;
+  sigc::signal<void,PBWidget*,bool,bool> onFocusChange;
   sigc::signal<void,PBWidget*,bool> onLeave;
   sigc::signal<void,PBWidget*> onFocusedWidgetChanged;
-  //CppSlot2 < PBWidget, void, PBWidget *, bool > WidgetFocusChangedSlot;
-  virtual void widgetFocusChangeHandler(PBWidget * sender, bool focused);
-  //CppSlot2 < PBWidget, void, PBWidget *, bool > WidgetLeaveSlot;
+  virtual void widgetFocusChangeHandler(PBWidget * sender, bool focused,bool update);
   virtual void widgetLeaveHandler(PBWidget * sender, bool next);
-  // events
-  //CppSignal2 < void, PBWidget *, bool > OnFocusChanged;
-  //CppSignal2 < void, PBWidget *, bool > OnLeave;
-  //CppSignal1 < void, PBWidget * >OnFocusedWidgetChanged;
 };
 
 typedef std::vector <PBWidget*>::iterator child_it;

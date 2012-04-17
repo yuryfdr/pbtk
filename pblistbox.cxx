@@ -89,17 +89,17 @@ PBListBox::~PBListBox()
     delete(*it);
 }
 
-void PBListBox::selectItem(PBListBoxItem * itm)
+void PBListBox::selectItem(PBListBoxItem * itm,bool upd)
 {
   if (itm) {
     std::vector < PBListBoxItem * >::iterator it = std::find(_items.begin(), _items.end(), itm);
     if (it != _items.end()) {
-      selectItem(it - _items.begin());
+      selectItem(it - _items.begin(),upd);
     }
   }
 }
 
-void PBListBox::selectItem(int nmb)
+void PBListBox::selectItem(int nmb,bool upd)
 {
   if (nmb >= 0 && nmb < (int)_items.size()) {
     int iy = _items[nmb]->y() + _items[nmb]->h();
@@ -111,7 +111,7 @@ void PBListBox::selectItem(int nmb)
       update_needed = true;
     }
     if(update_needed)placeWidgets();
-    _items[nmb]->setFocused(true);
+    _items[nmb]->setFocused(true,upd);
   }
 }
 void PBListBox::focusFirstIfCan(){
@@ -332,7 +332,7 @@ PBListBoxItem *PBListBox::addItem(const std::string & text, const std::string & 
   _items.push_back(newItem);
   addWidget(newItem);
   if (getFocusedWidget() == 0 && _focused)
-    newItem->setFocused(true);
+    newItem->setFocused(true,false);
   update_needed = true;
   return newItem;
 }

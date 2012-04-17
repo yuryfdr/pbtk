@@ -73,18 +73,20 @@ int PBWidget::dispatchMsgToWidgets(int type, int par1, int par2)
   return ret;
 }
 
-void PBWidget::widgetFocusChangeHandler(PBWidget * sender, bool focused)
+void PBWidget::widgetFocusChangeHandler(PBWidget * sender, bool focused,bool upd)
 {
   // only one child control can have focus
   if (focused) {
     PBWidget *fc = getFocusedWidget();
     if (fc != 0 && fc != sender){
-      fc->setFocused(false);
+      fc->setFocused(false,upd);
     }
     _focusedWidget = sender;
 
-    if(_parent)_parent->update();
-    else update();
+    if(upd){
+      if(_parent)_parent->update();
+      else update();
+    }
     onFocusedWidgetChanged.emit(this);
   } else {
   }
@@ -154,26 +156,26 @@ void PBWidget::setCanBeFocused(bool value)
     setFocused(false);
 }
 
-void PBWidget::setFocused(bool value)
+void PBWidget::setFocused(bool value,bool upd)
 {
   if (_focused == value)
     return;
   // if lost focus, clear focus of child controls
   if (!value) {
     for (child_it it = _children.begin(); it != _children.end(); ++it) {
-      (*it)->setFocused(false);
+      (*it)->setFocused(false,upd);
     }
   } else { // if got focus
     if (!canBeFocused())
       return;
     PBWidget *fc = getFocusedWidget();
     if (fc != 0) {
-      fc->setFocused(true);
+      fc->setFocused(true,upd);
     } else {
       // focus first visible child control
       for (child_it it = _children.begin(); it != _children.end(); ++it) {
         if ((*it)->isVisible() && (*it)->canBeFocused()) {
-          (*it)->setFocused(true);
+          (*it)->setFocused(true,upd);
           break;
         }
       }
@@ -181,7 +183,7 @@ void PBWidget::setFocused(bool value)
   }
   _focused = value;
 
-  onFocusChange.emit(this, value);
+  onFocusChange.emit(this, value,upd);
 }
 
 void PBWidget::setWidgetFont(ifont * value)

@@ -1,3 +1,8 @@
+17.04.2012
+  v 0.2
+  - dont redraw after add first item to list box
+16.04.2012
+  - add update arg to setFocused to minimize redraw
 05.04.2012
   - add onItemAction signal to listbox
 03.04.2012
