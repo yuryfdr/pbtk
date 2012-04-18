@@ -54,7 +54,7 @@ void PBListBoxItem::draw()
 
   if (_focused)
     DrawSelection(x() + markerWidth, y(), w() - markerWidth, h(), BLACK);
-  else if(getParent() && getParent()->getFocusedWidget() == this){
+  else if(getParent() && getParent()->getFocusedWidget() == this && canBeFocused()){
     DrawLine(x() + markerWidth, y()+h()-BORDER_SPACE,x()+w(),y()+h()-BORDER_SPACE,BLACK);
   }
 }

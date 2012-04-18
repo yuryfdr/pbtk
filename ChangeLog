@@ -1,5 +1,7 @@
-17.04.2012
+18.04.2012
   v 0.2
+  - don't underline unfocusable item in listbox
+17.04.2012
   - dont redraw after add first item to list box
 16.04.2012
   - add update arg to setFocused to minimize redraw
