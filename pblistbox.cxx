@@ -133,7 +133,6 @@ int PBListBox::handle(int type, int par1, int par2)
     return 1;
   }
   if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() + 2. * w() / 3.) < par1) {
-    //std::cerr<<"Scroll Pretend\n";
     if (totalHeight > (h() - getCaptionHeight())
         && scrollDelta < (totalHeight - (h() - getCaptionHeight()))
         && par2 > (y() + 2. / 3. * h())) {
@@ -141,7 +140,6 @@ int PBListBox::handle(int type, int par1, int par2)
       if (scrollDelta > (totalHeight - (h() - getCaptionHeight())))
         scrollDelta = (totalHeight - h() - getCaptionHeight());
       update(true);
-    //std::cerr<<"Scroll down\n";
       return 1;
     }
     if (totalHeight > h() && scrollDelta > 0 && par2 < (y() + 1. / 3. * h())) {
@@ -149,7 +147,6 @@ int PBListBox::handle(int type, int par1, int par2)
       if (scrollDelta < 0)
         scrollDelta = 0;
       update(true);
-    //std::cerr<<"Scroll up\n";
       return 1;
     }
   }

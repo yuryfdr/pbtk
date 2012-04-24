@@ -193,6 +193,11 @@ void PBWidget::setWidgetFont(ifont * value)
   _font = value;
   _useParentFont = false;
 }
+void PBWidget::replaceWidgetFont(ifont*old,ifont * value)
+{
+  if (_font == old) _font = value;
+  for (child_it it = _children.begin(); it != _children.end(); ++it) (*it)->replaceWidgetFont(old,value);
+}
 
 ifont *PBWidget::getFont() const {
   if (_useParentFont && _parent != 0)

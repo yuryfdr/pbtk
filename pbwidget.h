@@ -101,6 +101,7 @@ public:
   PBWidget *getFocusedWidget() const;
 
   void setWidgetFont(ifont * value);//< set font
+  void replaceWidgetFont(ifont* old,ifont * value);//< set font
   ifont *getFont() const;
 
   bool isVisible() const {
