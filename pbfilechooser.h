@@ -76,7 +76,6 @@ private:
   PBComboBox cbx_pattern;
   PBInput lb_path;
   void placeWidgets();
-  //CppSlot1<PBFileChooser,void,PBWidget*> btPress; 
   void on_pattern_changed(PBComboBox*);
 public:
   void onButton(PBWidget*);
@@ -96,7 +95,6 @@ public:
   void setPattern(const char*);
   const char* getPattern(){return cbx_pattern.getText().c_str();}
   void setInitialName(const char*);
-//  void run(iv_dirselecthandler hproc);
   void update(bool relayuot=false);
 };
 

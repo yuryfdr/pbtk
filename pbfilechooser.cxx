@@ -155,9 +155,7 @@ void PBFileChooser::on_pattern_changed(PBComboBox*bp){
 }
 PBFileChooser::PBFileChooser(const char* title,OpenMode mode):PBDialog(title),fileList("",this),bt_ok("OK",this),bt_cancel("Cancel",this),
   cbx_pattern("",this),lb_path("",this)//,
-  //btPress(this,&PBFileChooser::onButton)
 {
-  //fileList.setCaption(title);
   cbx_pattern.editable(false);
   cbx_pattern.setText("*");
   cbx_pattern.onChange.connect(sigc::mem_fun(this,&PBFileChooser::on_pattern_changed));

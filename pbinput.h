@@ -30,15 +30,16 @@
 class PBInput : public PBLabel {
   static PBInput* inp;
   static void inp_kbd_hndl(char*s);
-  public:
+ public:
   iv_keyboardhandler customh;
-  private:
+ private:
   int handle(int type, int par1, int par2);
-  public:
+ public:
   PBInput(const std::string nm,PBWidget*p):PBLabel(nm,p),customh(NULL){
     setCanBeFocused(true);
     _drawBorder=true;
   }
+  /** emitted when input is finnished */
   sigc::signal<void,PBInput*> endEdit;
 };
 

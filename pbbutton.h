@@ -33,7 +33,7 @@ public:
   virtual int w() const;
   virtual void setMaxWidth(int value) { _maxWidth = value; }
   virtual int getMaxWidth() const { return _maxWidth; };
-
+  /** emmited on button press*/
   sigc::signal<void,PBButton*> onPress;
 };
 
@@ -43,10 +43,11 @@ class PBCheckButton : public PBButton {
     _checked=!_checked;
     update();
   }
-  public:
+ public:
   PBCheckButton(const std::string &nm,PBWidget*p) : PBButton(nm,p),_checked(false){
     onPress.connect(sigc::mem_fun(this,&PBCheckButton::on_check));
   }
+  /** return true if check button is checked*/
   bool checked()const{return _checked;}
   void checked(bool c){_checked=c;update();}
   void draw();

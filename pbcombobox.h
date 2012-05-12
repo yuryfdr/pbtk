@@ -40,7 +40,7 @@ class PBComboBox : public PBWidget {
     OpenMenu(menu,0,x(),y()+h(),menu_hnd);
   }
   //
-  public:
+ public:
   PBComboBox(std::string nm,PBWidget*p):PBWidget(nm,p),inp("",this),but(">",this){
     _drawBorder=false;
     addWidget(&inp);
@@ -53,22 +53,27 @@ class PBComboBox : public PBWidget {
     inp.setSize(X,Y,W-H-1,H);
     but.setSize(X+W-H,Y,H,H);
   }
+  /** return text of current selected item */
   virtual std::string getText()const{
     return inp.getText();
   }
+  /** set text, it also add item */
   virtual void setText(const std::string& t){
     inp.setText(t);
     inp.endEdit.emit(&inp);
     update();
   }
+  /** set combobox items*/
   void setItems(const std::vector<std::string>& v){
     items=v;
   }
   ///return copy of items
   std::vector<std::string> getItems()const{ return items;}
-  
+  /** return true if input field is active*/
   bool editable()const{return inp.canBeFocused();}
+  /** set/unset editable state */
   void editable(bool cbf){inp.setCanBeFocused(cbf);}
+  /** emited when item is selected or if editable new item is added*/
   sigc::signal<void,PBComboBox*> onChange;
 };
 #endif //__PBCOMBOBOX_H__
