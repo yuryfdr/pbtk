@@ -97,5 +97,15 @@ inline std::string to_utf8(const std::string& str, const unsigned short *encodin
 }
 
 int filename_match(const char *s, const char *p);
+
+inline std::string convertbackslash(std::string & str)
+{
+  size_t pos = str.find_first_of("\\");
+  while (pos != str.npos) {
+    str[pos] = '/';
+    pos = str.find_first_of("\\");
+  }
+  return str;
+}
 #endif
 

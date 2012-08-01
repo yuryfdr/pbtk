@@ -1,4 +1,4 @@
-OUT= dummy
+OUT= pbtktest
 
 include /usr/local/pocketbook/common.mk
 
@@ -12,10 +12,12 @@ endif
 ifeq ($(BUILD),arm_gnueabi)
 CXXFLAGS+=-I/usr/arm-none-linux-gnueabi/include/c++/4.1.2 -I/usr/local/pocketbook_eabi/include \
 -I/usr/local/pocketbook_eabi/include/sigc++-2.0 
+LDFLAGS+=-L/usr/local/pocketbook_eabi/lib
 endif
 ifeq ($(BUILD),arm)
 CXXFLAGS+=-I/usr/arm-linux/include/c++/3.4.1  -I/usr/arm-linux/include/c++/3.4.1/arm-linux -I/usr/local/pocketbook/arm-linux/include \
 -I/usr/local/pocketbook/arm-linux/include/sigc++-2.0 
+LDFLAGS+=-L/usr/local/pocketbook/arm-linux/lib
 endif
 ifeq ($(BUILD),emu)
 CXXFLAGS+=-g `pkg-config --cflags sigc++-2.0` -I./../
@@ -64,7 +66,7 @@ LBPBTK=$(OBJDIR)/libpbtk.a
 
 LBPBTK_IMG=$(OBJDIR)/libpbtk_img.a
 
-all: $(LBPBTK) $(LBPBTK_IMG) #$(LIBPBTK_SHARED)
+all: $(PROJECT)
 
 $(LIBPBTK_SHARED): $(OBJDIR) $(OBJS)
 	$(CXX) -shared -o $@ -fPIC $(OBJS)
@@ -80,8 +82,8 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 #	mkdir -p $(OBJDIR)/images
 
-$(PROJECT): $(LBPBTK) $(LBPBTK_IMG) #$(LIBPBTK_SHARED)
-	touch $(PROJECT)
+$(PROJECT): pbtktest.cpp $(LBPBTK) $(LBPBTK_IMG) #$(LIBPBTK_SHARED)
+	$(CXX) $(CXXFLAGS) -o $(PROJECT) pbtktest.cpp $(LDFLAGS) $(LBPBTK) -lsigc-2.0 -linkview
 
 $(OBJDIR)/%.cxx.o: %.cxx
 	$(CXX) -c -o $@ $(CXXFLAGS) $(INCLUDES) $(CDEPS) $<
