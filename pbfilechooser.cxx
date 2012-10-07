@@ -73,6 +73,7 @@ void PBDirList::setPath(const std::string& nm){
   }
   for(std::vector<std::string>::iterator it=files.begin();it!=files.end();++it){
     itm = addItem(*it);
+    if(!select_files)itm->setCanBeFocused(false);
   }
   //update(true);
   placeWidgets();
@@ -112,15 +113,18 @@ int PBDirList::handle(int type, int par1, int par2){
           return 0;
         }
         if(type == EVT_KEYUP || type == EVT_KEYREPEAT){
-          load(item->getText());
           PBWidget* par = getParent();
           if(par){
             //par->update();
             if(type == EVT_KEYREPEAT){
               PBFileChooser* pfc=dynamic_cast<PBFileChooser*>(par);
-              if(pfc)pfc->onButton(&pfc->bt_ok);
+              if(pfc){
+                pfc->onButton(&pfc->bt_ok);
+                return 1;
+              }
             }
           }
+          load(item->getText());
         }
         return 1;
       }
@@ -184,7 +188,7 @@ void PBFileChooser::placeWidgets(){
 }
 
 void PBFileChooser::onButton(PBWidget* but){
-  if(but==&bt_ok && !fileList.getFname().empty()){
+  if(but==&bt_ok && (!fileList.getFname().empty() || omode==PBFC_ODIR)){
     quit(true);
     rethnd(1,this);
   }

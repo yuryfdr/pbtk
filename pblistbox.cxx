@@ -89,6 +89,20 @@ PBListBox::~PBListBox()
     delete(*it);
 }
 
+bool PBListBox::scrollTo(PBListBoxItem *itm)
+{
+  if(!itm)return false;
+  int iy = itm->y() + itm->h();
+  if (iy > y() + h()) {
+    scrollDelta = (iy + scrollDelta) - y() - h();
+    return true;
+  } else if (iy < y() + getCaptionHeight()) {
+    scrollDelta = iy + scrollDelta - y() - getCaptionHeight();
+    return true;
+  }
+  return false;
+}
+
 void PBListBox::selectItem(PBListBoxItem * itm,bool upd)
 {
   if (itm) {
@@ -102,15 +116,8 @@ void PBListBox::selectItem(PBListBoxItem * itm,bool upd)
 void PBListBox::selectItem(int nmb,bool upd)
 {
   if (nmb >= 0 && nmb < (int)_items.size()) {
-    int iy = _items[nmb]->y() + _items[nmb]->h();
-    if (iy > y() + h()) {
-      scrollDelta = (iy + scrollDelta) - y() - h();
-      update_needed = true;
-    } else if (_items[nmb]->y() < y() + getCaptionHeight()) {
-      scrollDelta = _items[nmb]->y() + scrollDelta - y() - getCaptionHeight();
-      update_needed = true;
-    }
-    if(update_needed)placeWidgets();
+    bool scr=scrollTo(nmb);
+    if(scr || update_needed)placeWidgets();
     _items[nmb]->setFocused(true,upd);
   }
 }
@@ -125,13 +132,13 @@ void PBListBox::focusFirstIfCan(){
 int PBListBox::handle(int type, int par1, int par2)
 {
   static bool was_repeat(false);
-  if (PBWidget::handle(type, par1, par2)){
-    PBListBoxItem* si;
-    if(type==EVT_POINTERLONG && eventInside(par1, par2) && (si=getSelectedItem())){
-      if( si->eventInside(par1,par2) )onItemAction.emit(this,getSelectedIndex());
-    }
+  PBWidget::handle(type, par1, par2);
+  PBListBoxItem* si=getSelectedItem();
+  if(type==EVT_POINTERLONG && eventInside(par1, par2) && si && si->eventInside(par1, par2)){
+    if( si->eventInside(par1,par2) )onItemAction.emit(this,getSelectedIndex());
     return 1;
   }
+
   if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() + 2. * w() / 3.) < par1) {
     if (totalHeight > (h() - getCaptionHeight())
         && scrollDelta < (totalHeight - (h() - getCaptionHeight()))
@@ -184,9 +191,13 @@ int PBListBox::handle(int type, int par1, int par2)
         update(true);
         return 1;
       }
-      if ( par1==KEY_OK && type==EVT_KEYREPEAT )onItemAction.emit(this,getSelectedIndex());
+    }
+    if ( par1==KEY_OK && type==EVT_KEYREPEAT ){
+      onItemAction.emit(this,getSelectedIndex());
+      return 1;
     }
   }
+
   if (EVT_KEYRELEASE == type && !was_repeat) {
     PBWidget *fc = getFocusedWidget();
     int fc_itm = -1;

@@ -64,7 +64,9 @@ class PBHSlider : public PBValuator {
         case EVT_POINTERUP:
           if(eventInside(p1,p2)){
             value_=x2v(p1);
+            onChange.emit(this);
             update();
+            return 1;
           }
         break;
       }

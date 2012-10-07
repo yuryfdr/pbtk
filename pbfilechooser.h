@@ -40,8 +40,11 @@ class PBDirList : public PBListBox{
   int handle(int type, int par1, int par2);
   std::string fname;
   std::string dname;
+  bool select_files;
   public:
-  PBDirList(const std::string nm,PBWidget*p):PBListBox(nm,p){}
+  PBDirList(const std::string nm,PBWidget*p):PBListBox(nm,p),select_files(true){}
+  
+  void selectFiles(bool b){select_files=b;}
   /**
     change dirrectory and select file
   */
@@ -79,7 +82,7 @@ private:
   void on_pattern_changed(PBComboBox*);
 public:
   void onButton(PBWidget*);
-  enum OpenMode {PBFC_OPEN=0,PBFC_SAVE=1} omode;
+  enum OpenMode {PBFC_OPEN=0,PBFC_SAVE=1,PBFC_ODIR=2} omode;
   PBFileChooser(const char* title,OpenMode mode = PBFC_OPEN);
   std::string getPath()const{
     return fileList.getPath();
@@ -91,6 +94,7 @@ public:
   void setMode(OpenMode mode){
     omode = mode;
     lb_path.setCanBeFocused(omode==PBFC_SAVE);
+    fileList.selectFiles(omode!=PBFC_ODIR);
   }
   void setPattern(const char*);
   const char* getPattern(){return cbx_pattern.getText().c_str();}

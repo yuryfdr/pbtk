@@ -71,8 +71,24 @@ public:
 
   virtual std::string getCaption() const { return _caption;}
   virtual void setCaption(const std::string & val) { _caption = val; };
+  /**
+    scroll item without making it focused
+    return true if update needed (if scroll value is changed)
+  */
+  virtual bool scrollTo(int nmb){
+    if(nmb>=0&&nmb<_items.size())
+      return scrollTo(_items[nmb]);
+    return false;
+  }
+  virtual bool scrollTo(PBListBoxItem *);
+  /**
+    select item (make it focused)
+  */
   virtual void selectItem(PBListBoxItem *,bool update=true);
   virtual void selectItem(int nmb,bool update=true);
+  /**
+    return items count
+  */
   int itemsCount()const{return _items.size();}
   virtual PBListBoxItem *addItem(const std::string & text, const std::string & tag = "", int align = 1);
   virtual PBListBoxItem *addItem(boost::shared_ptr<PBImage> image, const std::string & tag = "",int align =1);
@@ -112,6 +128,36 @@ public:
       return _items[i];
     }
     return NULL;
+  }
+  PBListBoxItem* nextItem(PBListBoxItem* itm,bool loop=false){
+    for(int i=0;i<(int)_items.size();++i){
+      if(itm==_items[i]){
+        if(i==_items.size()-1){
+          if(loop)return _items[0];
+          else return NULL;
+        }
+        return _items[i+1];
+      }
+    }
+    return NULL;
+  }
+  PBListBoxItem* prevItem(PBListBoxItem* itm,bool loop=false){
+    for(int i=0;i<(int)_items.size();++i){
+      if(itm==_items[i]){
+        if(i==0){
+          if(loop)return _items[_items.size()-1];
+          else return NULL;
+        }
+        return _items[i-1];
+      }
+    }
+    return NULL;
+  }
+  int getIndex(PBListBoxItem* itm)const{
+    for(int i=0;i<(int)_items.size();++i){
+      if(itm==_items[i])return i;
+    }
+    return -1;
   }
   sigc::signal<void,PBListBox*,int> onItemAction;//long OK or tap
 };

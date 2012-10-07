@@ -124,6 +124,9 @@ public:
       @arg ifont old - font that needs to be replaced
       @arg ifont value - new font
    */
+  void resetFont(){
+    setWidgetFont(defaultFont);
+  }
   ifont *getFont() const;
   /** return visibility state of widget
       @arg noparent - don't check parent visibility
@@ -139,6 +142,8 @@ public:
       This is not automaticaly due to low e-ink redraw speed.
    */
   void setVisible(bool val) { _visible = val; }
+  void hide(){setVisible(false);}
+  void show(){setVisible(true);}
   /** return parent widget */
   PBWidget *getParent() const { return _parent; };
 

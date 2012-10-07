@@ -1,3 +1,9 @@
+31.08.2012
+  - add resetFont function
+07.08.2012
+  - add hide/show methods in addition to setVisible
+01.08.2012
+  - begin implementing of value vidgets
 15.05.2012
   - add convertbackslash
   - some doxygen docs updated
