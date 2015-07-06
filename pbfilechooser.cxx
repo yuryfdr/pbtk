@@ -29,6 +29,7 @@ void PBDirList::setPath(const std::string& nm){
   struct stat st;
   stat(nm.c_str(),&st);
   if(!S_ISDIR(st.st_mode)){
+    std::string sdname=dname;
     size_t pspos=nm.find_last_of("/");
     if(pspos!=nm.npos && pspos!=0){
       dname=nm.substr(0,pspos);
@@ -39,10 +40,16 @@ void PBDirList::setPath(const std::string& nm){
         dname=buff;
         fname=nm;
     }
+    if(sdname==dname){
+      select(fname);
+      if(_parent)_parent->update();
+      return;
+    }
   }else{
     dname=nm;
     fname="";
   }
+  
   DIR *dir = iv_opendir(dname.c_str());
   clear();
   std::vector< std::string > dirs;
@@ -55,7 +62,7 @@ void PBDirList::setPath(const std::string& nm){
       if(nm=="." || nm=="..")continue;
       stat((dname+"/"+ep->d_name).c_str(),&st);
       if(S_ISDIR(st.st_mode))dirs.push_back(ep->d_name);
-      else {
+      else if(select_files){
         if(filename_match(ep->d_name,pattern))
           files.push_back(ep->d_name);
       }
@@ -78,17 +85,18 @@ void PBDirList::setPath(const std::string& nm){
   //update(true);
   placeWidgets();
   if(!fname.empty())select(fname);
-  else selectItem(0);
+  else select("..");//selectItem((int)0,true);
   if(_parent)_parent->update();
   else update();
 }
 void PBDirList::select(const std::string& s){
   for(lbitem_it it=_items.begin();it!=_items.end();++it){
-    if((*it)->getText()==s){selectItem(it-_items.begin());return;}
+    if((*it)->getText()==s){selectItem(it-_items.begin(),true);return;}
   }
 }
 
 void PBDirList::load(const std::string& str){
+  std::cerr<<"load:"<<str<<std::endl;
   if(str==".."){
     int ps = dname.find_last_of("/");
     if(ps!=(int)dname.npos)
@@ -163,7 +171,8 @@ PBFileChooser::PBFileChooser(const char* title,OpenMode mode):PBDialog(title),fi
   cbx_pattern.editable(false);
   cbx_pattern.setText("*");
   cbx_pattern.onChange.connect(sigc::mem_fun(this,&PBFileChooser::on_pattern_changed));
-  if(mode==PBFC_OPEN)lb_path.setCanBeFocused(false);
+  //if(mode==PBFC_OPEN)lb_path.setCanBeFocused(false);
+  setMode(mode);
   lb_path.customh=inp_h;
   addWidget(&fileList);
   addWidget(&lb_path);

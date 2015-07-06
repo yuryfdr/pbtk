@@ -93,11 +93,13 @@ bool PBListBox::scrollTo(PBListBoxItem *itm)
 {
   if(!itm)return false;
   int iy = itm->y() + itm->h();
-  if (iy > y() + h()) {
-    scrollDelta = (iy + scrollDelta) - y() - h();
+  int H=h()-2*BORDER_SPACE;
+  printf("iy %d %d %d %d\n",iy,y()+h(),itm->y(),y() + getCaptionHeight());
+  if (iy > y() + H) {
+    scrollDelta = iy-y()-h();//(itm->y() + scrollDelta) - y() - h();
     return true;
-  } else if (iy < y() + getCaptionHeight()) {
-    scrollDelta = iy + scrollDelta - y() - getCaptionHeight();
+  } else if (itm->y() < y() + getCaptionHeight()) {
+    scrollDelta = iy /*+ scrollDelta*/ - y() - getCaptionHeight()+BORDER_SPACE;
     return true;
   }
   return false;
@@ -125,6 +127,7 @@ void PBListBox::focusFirstIfCan(){
   placeWidgets();
   for(lbitem_it it = _items.begin();it<_items.end();++it){
     if( (*it)->y()>y() && (*it)->y()<y()+h() && (*it)->canBeFocused()){
+      scrollTo(*it);
       (*it)->setFocused(true);break;
     }
   }
@@ -139,7 +142,7 @@ int PBListBox::handle(int type, int par1, int par2)
     return 1;
   }
 
-  if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() + 2. * w() / 3.) < par1) {
+  if (EVT_POINTERUP == type && eventInside(par1, par2) && (x() +  w() -3.*BORDER_SPACE) < par1) {
     if (totalHeight > (h() - getCaptionHeight())
         && scrollDelta < (totalHeight - (h() - getCaptionHeight()))
         && par2 > (y() + 2. / 3. * h())) {
@@ -208,8 +211,8 @@ int PBListBox::handle(int type, int par1, int par2)
           fc_itm = i;
         if (_items[i]->canBeFocused()) {
           if (!fc || ((int)i > fc_itm && fc_itm != -1)) {
-            if (_items[i]->y() + _items[i]->h() > y() + h()) {
-              scrollDelta = (_items[i]->y() + _items[i]->h() + scrollDelta) - y() - h();
+            if (_items[i]->y() + _items[i]->h() > y() + h()-2*BORDER_SPACE) {
+              scrollDelta = (_items[i]->y() + _items[i]->h() + scrollDelta) - y() - h() + getCaptionHeight()+4*BORDER_SPACE;
               update_needed = true;
             }
             _items[i]->setFocused(true);
@@ -224,8 +227,8 @@ int PBListBox::handle(int type, int par1, int par2)
           fc_itm = i;
         if (_items[i]->canBeFocused()) {
           if (!fc || (i < fc_itm && fc_itm != -1)) {
-            if (_items[i]->y() < y() + getCaptionHeight()) {
-              scrollDelta = _items[i]->y() + scrollDelta - y() - getCaptionHeight();
+            if (_items[i]->y() < y() + getCaptionHeight()+BORDER_SPACE) {
+              scrollDelta = _items[i]->y() + scrollDelta - y() - getCaptionHeight()-BORDER_SPACE;
               update_needed = true;
             }
             _items[i]->setFocused(true);
@@ -275,6 +278,7 @@ void PBListBox::placeWidgets()
   int top = y() + BORDER_SPACE + getCaptionHeight() + BORDER_SPACE;
   totalHeight = BORDER_SPACE + getCaptionHeight() + BORDER_SPACE + 10;
   top -= scrollDelta;
+  printf("top %d %d\n",top,scrollDelta);
   for (size_t i = 0; i < _items.size(); ++i) {
     _items[i]->setMaxHeight(0);
     _items[i]->setSize(x() + BORDER_SPACE, top, w() - BORDER_SPACE * 4, 0);
@@ -423,6 +427,7 @@ void PBListBox::clear()
   }
   _items.clear();
   _focusedWidget = NULL;
+  scrollDelta=0;
   update_needed = true;
 }
 

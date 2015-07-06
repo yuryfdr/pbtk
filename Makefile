@@ -21,6 +21,7 @@ LDFLAGS+=-L/usr/local/pocketbook/arm-linux/lib
 endif
 ifeq ($(BUILD),emu)
 CXXFLAGS+=-g `pkg-config --cflags sigc++-2.0` -I./../
+LDFLAGS+= /usr/lib32/libpng12.so.0
 endif
 
 
