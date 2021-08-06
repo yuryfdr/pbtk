@@ -1,5 +1,12 @@
-this is toolkit for PB v 0.2
+this is toolkit for PB v 0.3
 API may changed until 1.0
 
-to build pbtk you must first build (or install for 
-emulator libsigc++ and libsigc++-dev ) libsigc++ - current tested version is 2.2.10
+included third party libraries:
+
+boost (only for shared_ptr headers from boost-1.76, Boos licence https://www.boost.org/users/license.html)
+libsigc++-2.4.1 (version that not need c++11,  GNU Library General Public License https://www.gnu.org/licenses/lgpl-3.0-standalone.html)
+
+
+for build you must get pocket-book sdk (currently used fork from https://github.com/blchinezu/pocketbook-sdk)
+
+see make.sh for details

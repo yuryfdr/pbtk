@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "PBImg.h"
 #include <zlib.h>
+#define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 
 
